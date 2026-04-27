@@ -27,6 +27,54 @@ Full-stack, banking-style reference application: a **FastAPI** backend with **JW
 
 ---
 
+## ✨ Features
+
+### 🔐 Authentication & Security
+- Email/password login with **Argon2 hashing**
+- **JWT-based authentication** for stateless sessions
+- **Google OAuth 2.0** integration via Authlib
+- Secure API access with CORS configuration
+
+---
+
+### 💰 Banking Capabilities
+- Account creation and management  
+- Balance inquiry  
+- Deposit and withdrawal operations  
+- Persistent transaction history  
+
+---
+
+### 🤖 AI Assistant (RAG + Agent)
+- Policy-aware responses using **Chroma vector store**
+- Semantic retrieval with **Hugging Face embeddings**
+- LLM reasoning via **OpenRouter-compatible API**
+- **Tool-based execution**:
+  - Fetch balance
+  - Retrieve transactions
+  - Validate withdrawals  
+
+---
+
+### ⚡ Real-Time Experience
+- Streaming chat responses (where enabled)
+- Low-latency interaction with async FastAPI endpoints  
+
+---
+
+### 🧪 Automation (Optional)
+- Playwright-based browser automation
+- Useful for UI testing and workflow simulation  
+
+---
+
+### 📊 Observability
+- Request latency tracking  
+- `X-Process-Time` response header  
+- Structured logging for debugging and monitoring  
+
+---
+
 ## Technology stack
 
 ### Backend
