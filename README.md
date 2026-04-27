@@ -135,6 +135,33 @@ Full-stack, banking-style reference application: a **FastAPI** backend with **JW
 ```bash
 git clone https://github.com/<your-username>/<your-repo>.git
 cd <your-repo>
+
 python -m venv .venv
-# Windows: .venv\Scripts\activate
+
+# Windows
+.venv\Scripts\activate
+
+# macOS/Linux
+source .venv/bin/activate
+
 pip install -r requirements.txt
+uvicorn main:app --reload
+```
+
+---
+### Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+---
+## 👨‍💻 Author
+
+**Harshil Soni**  
+Backend Engineer | AI Systems | Full-Stack Developer  
+
+- Focus: Scalable backend systems, AI integration, system design  
+- Interests: Agentic AI, RAG systems, distributed architecture  
