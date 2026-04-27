@@ -14,7 +14,7 @@ Secure banking-style API with a **React** web app and an AI assistant that answe
 ![JWT](https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=jsonwebtokens)
 ![OAuth](https://img.shields.io/badge/OAuth%202.0-EB5424?style=for-the-badge&logo=auth0)
 
-![LangChain](https://img.shields.io/badge/LangChain-121212?style=for-the-badge)
+![LangChain](https://img.shields.io/badge/LangChain-121218?style=for-the-badge)
 ![Chroma](https://img.shields.io/badge/ChromaDB-FF6F00?style=for-the-badge)
 
 ![HuggingFace](https://img.shields.io/badge/HuggingFace-FFD21E?style=for-the-badge&logo=huggingface&logoColor=black)
