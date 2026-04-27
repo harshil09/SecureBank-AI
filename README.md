@@ -1,13 +1,11 @@
-# SecureBank-AI
-
 # Banking API & AI Assistant
 
-Secure banking-style API with a Streamlit dashboard and an AI assistant that answers using retrieved policies and live account data.
+Secure banking-style API with a **React** web app and an AI assistant that answers using retrieved policies and live account data.
 
 ## Overview
 
 - **Backend:** FastAPI — auth (JWT + Google OAuth), accounts, transactions  
-- **Frontend:** Streamlit — login, dashboard, chat against the API  
+- **Frontend:** React — login, dashboard, chat client calling the API  
 - **AI:** RAG (Chroma + embeddings) + LLM (OpenRouter) + tool-using agent tied to SQLite  
 - **Automation (optional):** Playwright for browser-based flows  
 
@@ -18,7 +16,7 @@ Secure banking-style API with a Streamlit dashboard and an AI assistant that ans
 | API & server | FastAPI, Uvicorn, Starlette |
 | Auth & security | JWT (`python-jose`), Argon2 (`passlib`), Google OAuth (`Authlib`), CORS |
 | Data & validation | SQLite, Pydantic |
-| Frontend | Streamlit, Requests, Pandas |
+| Frontend | React, (e.g. Vite), HTTP client (`fetch` / Axios), routing as needed |
 | AI / RAG | LangChain (`langchain-community`, `langchain-openai`), Chroma, Hugging Face Embeddings (`sentence-transformers` / `all-MiniLM-L6-v2`), OpenRouter (e.g. Llama 3) |
 | Agent & tools | Custom agent + LangChain tools, SQLite-backed queries |
 | Browser automation | Playwright (Python) |
@@ -37,6 +35,7 @@ Secure banking-style API with a Streamlit dashboard and an AI assistant that ans
 ## Prerequisites
 
 - Python 3.10+ (adjust if you use a different version)  
+- Node.js + npm/pnpm/yarn (for the React app)  
 - [Playwright](https://playwright.dev/python/) browsers if you use the UI bot (`playwright install`)  
 - API keys / config: `OPENROUTER_API_KEY`, Google OAuth vars, JWT secret, etc.  
 
@@ -48,7 +47,11 @@ Create a `.env` file (do **not** commit secrets). Example names used in the proj
 - `OPENROUTER_API_KEY`  
 - JWT / session-related values as in `auth_utils` / `main.py`  
 
+The React app may use its own `.env` (e.g. `VITE_API_BASE_URL`) pointing at the FastAPI server.
+
 ## Setup
+
+**Backend**
 
 ```bash
 git clone https://github.com/<your-username>/<your-repo>.git
