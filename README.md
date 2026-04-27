@@ -84,10 +84,30 @@ Secure banking-style API with a **React** web app and an AI assistant that answe
 ![LangChain](https://img.shields.io/badge/LangChain-0F172A?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjMDBGRkQxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJMMiA3bDEwIDUgMTAtNS0xMC01em0wIDdsLTEwIDUgMTAgNSAxMC01LTEwLTV6Ii8+PC9zdmc+)
 
 ![ChromaDB](https://img.shields.io/badge/ChromaDB-111827?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjRkY2RjAwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiLz48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSI2IiBmaWxsPSIjZmZmIi8+PC9zdmc+)
-
 <p align="left">
-  <img src="./assets/chromadb.svg" height="28" style="margin-right:6px;"/>
-  <img src="./assets/openrouter.svg" height="28"/>
+
+<!-- ChromaDB -->
+<svg height="28" viewBox="0 0 120 32" xmlns="http://www.w3.org/2000/svg">
+  <rect width="120" height="32" rx="6" fill="#111827"/>
+  <circle cx="18" cy="16" r="8" fill="#FF6F00"/>
+  <circle cx="18" cy="16" r="4" fill="#ffffff"/>
+  <text x="70" y="20" font-size="13" fill="#FF6F00" text-anchor="middle" font-family="Arial">
+    ChromaDB
+  </text>
+</svg>
+
+<!-- OpenRouter -->
+<svg height="28" viewBox="0 0 140 32" xmlns="http://www.w3.org/2000/svg">
+  <rect width="140" height="32" rx="6" fill="#0B0F19"/>
+  <circle cx="18" cy="16" r="7" stroke="#00E5FF" stroke-width="2" fill="none"/>
+  <circle cx="18" cy="16" r="2" fill="#00E5FF"/>
+  <line x1="18" y1="9" x2="18" y2="5" stroke="#00E5FF" stroke-width="2"/>
+  <line x1="18" y1="23" x2="18" y2="27" stroke="#00E5FF" stroke-width="2"/>
+  <text x="85" y="20" font-size="13" fill="#00E5FF" text-anchor="middle" font-family="Arial">
+    OpenRouter
+  </text>
+</svg>
+
 </p>
 ## Overview
 
