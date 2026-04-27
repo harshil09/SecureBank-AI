@@ -1,7 +1,24 @@
 # Banking API & AI Assistant
 
 Secure banking-style API with a **React** web app and an AI assistant that answers using retrieved policies and live account data.
+---
 
+## 🛠️ Tech Stack
+
+![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react)
+![SQLite](https://img.shields.io/badge/SQLite-07405E?style=for-the-badge&logo=sqlite)
+![JWT](https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=jsonwebtokens)
+![OAuth](https://img.shields.io/badge/OAuth%202.0-EB5424?style=for-the-badge&logo=auth0)
+![LangChain](https://img.shields.io/badge/LangChain-121212?style=for-the-badge)
+![Chroma](https://img.shields.io/badge/ChromaDB-FF6F00?style=for-the-badge)
+![HuggingFace](https://img.shields.io/badge/HuggingFace-FFD21E?style=for-the-badge&logo=huggingface&logoColor=black)
+![OpenRouter](https://img.shields.io/badge/OpenRouter-000000?style=for-the-badge)
+![Playwright](https://img.shields.io/badge/Playwright-2EAD33?style=for-the-badge&logo=microsoft-playwright&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python)
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite)
+
+---
 ## Overview
 
 - **Backend:** FastAPI — auth (JWT + Google OAuth), accounts, transactions  
