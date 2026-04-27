@@ -2,6 +2,43 @@
 
 Secure banking-style API with a **React** web app and an AI assistant that answers using retrieved policies and live account data.
 
+## 🛠️ Tech Stack
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://img.shields.io/badge/FastAPI-black?style=for-the-badge&logo=fastapi&logoColor=009688">
+  <img src="https://img.shields.io/badge/FastAPI-white?style=for-the-badge&logo=fastapi&logoColor=009688">
+</picture>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://img.shields.io/badge/React-black?style=for-the-badge&logo=react&logoColor=61DAFB">
+  <img src="https://img.shields.io/badge/React-white?style=for-the-badge&logo=react&logoColor=61DAFB">
+</picture>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://img.shields.io/badge/SQLite-black?style=for-the-badge&logo=sqlite&logoColor=4DB33D">
+  <img src="https://img.shields.io/badge/SQLite-white?style=for-the-badge&logo=sqlite&logoColor=003B57">
+</picture>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://img.shields.io/badge/HuggingFace-black?style=for-the-badge&logo=huggingface&logoColor=FFD21E">
+  <img src="https://img.shields.io/badge/HuggingFace-white?style=for-the-badge&logo=huggingface&logoColor=FFCC00">
+</picture>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://img.shields.io/badge/Playwright-black?style=for-the-badge&logo=microsoft-playwright&logoColor=2EAD33">
+  <img src="https://img.shields.io/badge/Playwright-white?style=for-the-badge&logo=microsoft-playwright&logoColor=2EAD33">
+</picture>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://img.shields.io/badge/Python-black?style=for-the-badge&logo=python&logoColor=3776AB">
+  <img src="https://img.shields.io/badge/Python-white?style=for-the-badge&logo=python&logoColor=3776AB">
+</picture>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://img.shields.io/badge/Vite-black?style=for-the-badge&logo=vite&logoColor=646CFF">
+  <img src="https://img.shields.io/badge/Vite-white?style=for-the-badge&logo=vite&logoColor=646CFF">
+</picture>
+
 ## Overview
 
 - **Backend:** FastAPI — auth (JWT + Google OAuth), accounts, transactions  
