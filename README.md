@@ -27,6 +27,38 @@ Full-stack, banking-style reference application: a **FastAPI** backend with **JW
 
 ---
 
+## Technology stack
+
+### Backend
+
+| Category | Technologies |
+|----------|----------------|
+| Runtime & framework | Python, **FastAPI**, **Starlette**, **Uvicorn** |
+| Configuration | **python-dotenv** |
+| Security & auth | **Passlib** (Argon2), **python-jose** (JWT), **Authlib** (Google OAuth), **cryptography** / **cffi** (transitive crypto stack) |
+| HTTP & validation | **python-multipart**, **Pydantic** v2 |
+| Data | **SQLite** (via `sqlite3`), optional **pandas** where used in tooling or scripts |
+| AI & retrieval | **LangChain** (`langchain-community`, `langchain-openai`), **Chroma**, **Hugging Face** embeddings (`all-MiniLM-L6-v2` via `HuggingFaceEmbeddings`) |
+| LLM routing | **OpenRouter**-compatible HTTP API (**ChatOpenAI** with custom `base_url`) |
+| Automation | **Playwright** (Python, async API) |
+| Middleware | Custom latency middleware (`X-Process-Time`, structured logging) |
+
+### Frontend (`frontend/`)
+
+| Category | Technologies |
+|----------|----------------|
+| UI library | **React 18**, **React DOM** |
+| Build tooling | **Vite**, **@vitejs/plugin-react** |
+| Styling | **Tailwind CSS**, **PostCSS**, **Autoprefixer** |
+| Routing | **React Router** v6 |
+| State | **Zustand** |
+| Forms & validation | **React Hook Form**, **Zod**, **@hookform/resolvers** |
+| HTTP client | **Axios** |
+| UX | **Framer Motion**, **Lucide React** (icons) |
+| Quality | **ESLint** (project config) |
+
+---
+
 ## ✨ Features
 
 ### 🔐 Authentication & Security
@@ -72,49 +104,6 @@ Full-stack, banking-style reference application: a **FastAPI** backend with **JW
 - Request latency tracking  
 - `X-Process-Time` response header  
 - Structured logging for debugging and monitoring  
-
----
-
-## Technology stack
-
-### Backend
-
-| Category | Technologies |
-|----------|----------------|
-| Runtime & framework | Python, **FastAPI**, **Starlette**, **Uvicorn** |
-| Configuration | **python-dotenv** |
-| Security & auth | **Passlib** (Argon2), **python-jose** (JWT), **Authlib** (Google OAuth), **cryptography** / **cffi** (transitive crypto stack) |
-| HTTP & validation | **python-multipart**, **Pydantic** v2 |
-| Data | **SQLite** (via `sqlite3`), optional **pandas** where used in tooling or scripts |
-| AI & retrieval | **LangChain** (`langchain-community`, `langchain-openai`), **Chroma**, **Hugging Face** embeddings (`all-MiniLM-L6-v2` via `HuggingFaceEmbeddings`) |
-| LLM routing | **OpenRouter**-compatible HTTP API (**ChatOpenAI** with custom `base_url`) |
-| Automation | **Playwright** (Python, async API) |
-| Middleware | Custom latency middleware (`X-Process-Time`, structured logging) |
-
-### Frontend (`frontend/`)
-
-| Category | Technologies |
-|----------|----------------|
-| UI library | **React 18**, **React DOM** |
-| Build tooling | **Vite**, **@vitejs/plugin-react** |
-| Styling | **Tailwind CSS**, **PostCSS**, **Autoprefixer** |
-| Routing | **React Router** v6 |
-| State | **Zustand** |
-| Forms & validation | **React Hook Form**, **Zod**, **@hookform/resolvers** |
-| HTTP client | **Axios** |
-| UX | **Framer Motion**, **Lucide React** (icons) |
-| Quality | **ESLint** (project config) |
-
----
-
-## Features
-
-- Email/password and Google OAuth sign-in  
-- JWT-protected banking and chat endpoints  
-- Deposits, withdrawals, and balance inquiries with transaction history  
-- Policy-aware chat via RAG; authenticated users get answers augmented with account-specific tool results  
-- Streaming chat support (where exposed by the API)  
-- Optional Playwright integration for browser-driven workflows  
 
 ---
 
