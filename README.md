@@ -149,6 +149,7 @@ uvicorn main:app --reload
 ```
 
 ---
+
 ### Frontend
 
 ```bash
@@ -158,10 +159,44 @@ npm run dev
 ```
 
 ---
+
+## 🔐 Authentication Flow
+
+### Email / Password
+
+User → /register → Account created  
+User → /login → JWT issued  
+Client → sends JWT → backend validates  
+
+---
+
+### Google OAuth
+
+User → /auth/google/login  
+→ Redirect to Google  
+→ Callback → JWT issued  
+
+---
+
+### AI Integration
+
+JWT verified → Agent allowed to access:
+- balance
+- transactions
+- withdrawal checks
+
+---
+
 ## 👨‍💻 Author
 
 **Harshil Soni**  
 Backend Engineer | AI Systems | Full-Stack Developer  
 
 - Focus: Scalable backend systems, AI integration, system design  
-- Interests: Agentic AI, RAG systems, distributed architecture  
+- Interests: Agentic AI, RAG systems, distributed architecture
+
+---
+
+## 📄 License
+
+MIT License
