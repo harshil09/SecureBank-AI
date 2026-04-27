@@ -13,11 +13,15 @@ Secure banking-style API with a **React** web app and an AI assistant that answe
 ![SQLite](https://img.shields.io/badge/SQLite-07405E?style=for-the-badge&logo=sqlite)
 ![JWT](https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=jsonwebtokens)
 ![OAuth](https://img.shields.io/badge/OAuth%202.0-EB5424?style=for-the-badge&logo=auth0)
+
 ![LangChain](https://img.shields.io/badge/LangChain-121212?style=for-the-badge)
 ![Chroma](https://img.shields.io/badge/ChromaDB-FF6F00?style=for-the-badge)
-![HuggingFace](https://img.shields.io/badge/HuggingFace-FFD21E?style=for-the-badge&logo=huggingface)
+
+![HuggingFace](https://img.shields.io/badge/HuggingFace-FFD21E?style=for-the-badge&logo=huggingface&logoColor=black)
 ![OpenRouter](https://img.shields.io/badge/OpenRouter-000000?style=for-the-badge)
-![Playwright](https://img.shields.io/badge/Playwright-2EAD33?style=for-the-badge&logo=playwright)
+
+![Playwright](https://img.shields.io/badge/Playwright-2EAD33?style=for-the-badge&logo=microsoft-playwright&logoColor=white)
+
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python)
 ![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite)
 ## Overview
