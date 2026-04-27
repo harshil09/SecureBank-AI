@@ -39,6 +39,48 @@ Secure banking-style API with a **React** web app and an AI assistant that answe
   <img src="https://img.shields.io/badge/Vite-white?style=for-the-badge&logo=vite&logoColor=646CFF">
 </picture>
 
+<!-- Hugging Face -->
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://img.shields.io/badge/HuggingFace-black?style=for-the-badge&logo=huggingface&logoColor=FFD21E">
+  <img src="https://img.shields.io/badge/HuggingFace-white?style=for-the-badge&logo=huggingface&logoColor=FFCC00">
+</picture>
+
+<!-- LangChain (no official logo on shields → clean fallback) -->
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://img.shields.io/badge/LangChain-black?style=for-the-badge&logoColor=white">
+  <img src="https://img.shields.io/badge/LangChain-white?style=for-the-badge&logoColor=black">
+</picture>
+
+<!-- ChromaDB (no official logo) -->
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://img.shields.io/badge/ChromaDB-black?style=for-the-badge&logoColor=orange">
+  <img src="https://img.shields.io/badge/ChromaDB-white?style=for-the-badge&logoColor=FF6F00">
+</picture>
+
+<!-- SQLite -->
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://img.shields.io/badge/SQLite-black?style=for-the-badge&logo=sqlite&logoColor=4DB33D">
+  <img src="https://img.shields.io/badge/SQLite-white?style=for-the-badge&logo=sqlite&logoColor=003B57">
+</picture>
+
+<!-- JWT -->
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=jsonwebtokens&logoColor=white">
+  <img src="https://img.shields.io/badge/JWT-white?style=for-the-badge&logo=jsonwebtokens&logoColor=black">
+</picture>
+
+<!-- Google OAuth -->
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://img.shields.io/badge/Google%20OAuth-black?style=for-the-badge&logo=google&logoColor=4285F4">
+  <img src="https://img.shields.io/badge/Google%20OAuth-white?style=for-the-badge&logo=google&logoColor=4285F4">
+</picture>
+
+<!-- OpenRouter (no official logo) -->
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://img.shields.io/badge/OpenRouter-black?style=for-the-badge&logoColor=white">
+  <img src="https://img.shields.io/badge/OpenRouter-white?style=for-the-badge&logoColor=black">
+</picture>
+
 ## Overview
 
 - **Backend:** FastAPI — auth (JWT + Google OAuth), accounts, transactions  
