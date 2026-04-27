@@ -84,6 +84,11 @@ Secure banking-style API with a **React** web app and an AI assistant that answe
 ![LangChain](https://img.shields.io/badge/LangChain-0F172A?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjMDBGRkQxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJMMiA3bDEwIDUgMTAtNS0xMC01em0wIDdsLTEwIDUgMTAgNSAxMC01LTEwLTV6Ii8+PC9zdmc+)
 
 ![ChromaDB](https://img.shields.io/badge/ChromaDB-111827?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjRkY2RjAwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiLz48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSI2IiBmaWxsPSIjZmZmIi8+PC9zdmc+)
+
+<p align="left">
+  <img src="./assets/chromadb.svg" height="28"/>
+  <img src="./assets/openrouter.svg" height="28"/>
+</p>
 ## Overview
 
 - **Backend:** FastAPI — auth (JWT + Google OAuth), accounts, transactions  
