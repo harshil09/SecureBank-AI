@@ -5,18 +5,18 @@ Secure banking-style API with a **React** web app and an AI assistant that answe
 
 ## 🛠️ Tech Stack
 
-![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)
-![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react)
-![SQLite](https://img.shields.io/badge/SQLite-07405E?style=for-the-badge&logo=sqlite)
-![JWT](https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=jsonwebtokens)
-![OAuth](https://img.shields.io/badge/OAuth%202.0-EB5424?style=for-the-badge&logo=auth0)
-![LangChain](https://img.shields.io/badge/LangChain-121212?style=for-the-badge)
-![Chroma](https://img.shields.io/badge/ChromaDB-FF6F00?style=for-the-badge)
-![HuggingFace](https://img.shields.io/badge/HuggingFace-FFD21E?style=for-the-badge&logo=huggingface&logoColor=black)
-![OpenRouter](https://img.shields.io/badge/OpenRouter-000000?style=for-the-badge)
-![Playwright](https://img.shields.io/badge/Playwright-2EAD33?style=for-the-badge&logo=microsoft-playwright&logoColor=white)
-![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python)
-![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite)
+![FastAPI](https://img.shields.io/badge/FastAPI-white?style=for-the-badge&logo=fastapi&logoColor=009688)
+![React](https://img.shields.io/badge/React-white?style=for-the-badge&logo=react&logoColor=61DAFB)
+![SQLite](https://img.shields.io/badge/SQLite-white?style=for-the-badge&logo=sqlite&logoColor=003B57)
+![JWT](https://img.shields.io/badge/JWT-white?style=for-the-badge&logo=jsonwebtokens&logoColor=000000)
+![OAuth](https://img.shields.io/badge/OAuth%202.0-white?style=for-the-badge&logo=auth0&logoColor=EB5424)
+![LangChain](https://img.shields.io/badge/LangChain-white?style=for-the-badge&logoColor=000000)
+![Chroma](https://img.shields.io/badge/ChromaDB-white?style=for-the-badge&logoColor=FF6F00)
+![HuggingFace](https://img.shields.io/badge/HuggingFace-white?style=for-the-badge&logo=huggingface&logoColor=FFCC00)
+![OpenRouter](https://img.shields.io/badge/OpenRouter-white?style=for-the-badge&logoColor=000000)
+![Playwright](https://img.shields.io/badge/Playwright-white?style=for-the-badge&logo=microsoft-playwright&logoColor=2EAD33)
+![Python](https://img.shields.io/badge/Python-white?style=for-the-badge&logo=python&logoColor=3776AB)
+![Vite](https://img.shields.io/badge/Vite-white?style=for-the-badge&logo=vite&logoColor=646CFF)
 
 ---
 ## Overview
