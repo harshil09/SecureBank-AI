@@ -1,0 +1,331 @@
+/* Tailwind Directives - MUST be at the top */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/* Professional Design Tokens - Dynamic HSL-based System */
+@layer base {
+  :root {
+    /* Semantic Color Tokens - Light Mode */
+    --text-primary: 220 20% 10%;    /* Dark gray for headings */
+    --text-secondary: 220 15% 40%;  /* Medium gray for body */
+    --bg-primary: 0 0% 100%;        /* White background */
+    --bg-secondary: 0 0% 98%;       /* Off-white surfaces */
+    --border: 220 15% 90%;          /* Light gray borders */
+    --code-bg: 220 15% 95%;         /* Subtle code background */
+    
+    /* Primary Brand Palette - Professional Blue (easily customizable) */
+    --primary-h: 220;               /* Hue: Cool professional blue */
+    --primary-s: 60%;               /* Saturation: Balanced vibrancy */
+    --primary-l-50: 50%;            /* Base lightness */
+    --primary: hsl(var(--primary-h) var(--primary-s) var(--primary-l-50));
+    --primary-fg: 0 0% 100%;        /* White text on primary */
+    --primary-bg: 220 60% 97%;      /* Light primary tint */
+    --primary-border: 220 60% 85%;  /* Primary border */
+    
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 hsl(220 20% 10% / 0.05);
+    --shadow-md: 0 4px 6px -1px hsl(220 20% 10% / 0.1), 0 2px 4px -1px hsl(220 20% 10% / 0.06);
+    --shadow-lg: 0 10px 15px -3px hsl(220 20% 10% / 0.1), 0 4px 6px -2px hsl(220 20% 10% / 0.05);
+    
+    /* Typography Scale */
+    --font-size-base: 18px;
+    --font-size-h1: clamp(36px, 5vw, 56px);
+    --font-size-h2: clamp(20px, 3vw, 24px);
+    --font-size-code: 15px;
+    
+    /* Spacing */
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2rem;
+    
+    /* Border Radius */
+    --radius-sm: 0.5rem;
+    --radius-md: 0.75rem;
+    --radius-lg: 1rem;
+    
+    /* Fonts */
+    --sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --mono: ui-monospace, SFMono-Regular, 'SF Mono', Consolas, monospace;
+  }
+
+  /* Dark Mode - Automatic via color-scheme */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      /* Semantic Color Tokens - Dark Mode */
+      --text-primary: 0 0% 98%;      /* Near-white headings */
+      --text-secondary: 220 15% 65%; /* Light gray body */
+      --bg-primary: 220 20% 8%;      /* Dark slate background */
+      --bg-secondary: 220 20% 12%;   /* Slightly lighter surfaces */
+      --border: 220 20% 25%;         /* Dark borders */
+      --code-bg: 220 20% 18%;        /* Dark code background */
+      
+      /* Primary adapts automatically */
+      --primary-l-50: 70%;           /* Lighter base for dark mode */
+      --primary-bg: 220 60% 20%;     /* Dark primary tint */
+      --primary-border: 220 60% 40%; /* Lighter primary border */
+      
+      /* Shadows - Dark optimized */
+      --shadow-sm: 0 1px 2px 0 hsl(0 0% 0% / 0.3);
+      --shadow-md: 0 4px 6px -1px hsl(0 0% 0% / 0.4), 0 2px 4px -1px hsl(0 0% 0% / 0.3);
+      --shadow-lg: 0 20px 25px -5px hsl(0 0% 0% / 0.4), 0 10px 10px -5px hsl(0 0% 0% / 0.2);
+    }
+  }
+}
+
+/* Custom Professional Utilities */
+@layer utilities {
+  .professional-blob {
+    /* Subtle professional alternative to original blob */
+    animation: professional-pulse 4s ease-in-out infinite;
+    border-radius: 50% 40% 30% 60% / 40% 30% 60% 50%;
+  }
+  
+  .gradient-primary {
+    background: linear-gradient(135deg, hsl(var(--primary-h) var(--primary-s) 95%), hsl(var(--primary-h) var(--primary-s) 85%));
+  }
+}
+
+@keyframes professional-pulse {
+  0%, 100% { 
+    transform: scale(1) rotate(0deg);
+    opacity: 0.6;
+  }
+  50% { 
+    transform: scale(1.05) rotate(180deg);
+    opacity: 0.8;
+  }
+}
+
+/* Base Styles - Professional Typography & Layout */
+@layer base {
+  *, ::before, ::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    font-size: var(--font-size-base);
+    line-height: 1.45;
+    letter-spacing: -0.01em;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    margin: 0;
+    font-family: var(--sans);
+    color: hsl(var(--text-secondary));
+    background: hsl(var(--bg-primary));
+    min-height: 100vh;
+  }
+
+  #root {
+    max-width: 1128px;
+    width: 100%;
+    margin: 0 auto;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    border-left: 1px solid hsl(var(--border));
+    border-right: 1px solid hsl(var(--border));
+    box-shadow: var(--shadow-lg);
+  }
+
+  h1, h2 {
+    font-family: var(--sans);
+    font-weight: 600;
+    color: hsl(var(--text-primary));
+    line-height: 1.1;
+  }
+
+  h1 {
+    font-size: var(--font-size-h1);
+    margin: var(--spacing-lg) 0 var(--spacing-md);
+  }
+
+  h2 {
+    font-size: var(--font-size-h2);
+    margin-bottom: var(--spacing-xs);
+  }
+
+  p {
+    margin: 0 0 var(--spacing-sm);
+  }
+
+  code, .counter {
+    font-family: var(--mono);
+    font-size: var(--font-size-code);
+    font-weight: 500;
+    color: hsl(var(--text-primary));
+    background: hsl(var(--code-bg));
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid hsl(var(--border));
+  }
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  html {
+    font-size: 16px;
+  }
+  
+  #root {
+    border-left: none;
+    border-right: none;
+    box-shadow: none;
+  }
+}
+
+/* Focus States - Accessibility */
+@layer utilities {
+  *:focus-visible {
+    outline: 2px solid hsl(var(--primary));
+    outline-offset: 2px;
+  }
+}
+/*
+@layer utilities {
+  .animate-blob {
+    animation: blob 7s infinite;
+  }
+  
+  .animation-delay-2000 {
+    animation-delay: 2s;
+  }
+  
+  .animation-delay-4000 {
+    animation-delay: 4s;
+  }
+}
+
+@keyframes blob {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+}
+
+
+:root {
+  --text: #6b6375;
+  --text-h: #08060d;
+  --bg: #fff;
+  --border: #e5e4e7;
+  --code-bg: #f4f3ec;
+  --accent: #aa3bff;
+  --accent-bg: rgba(170, 59, 255, 0.1);
+  --accent-border: rgba(170, 59, 255, 0.5);
+  --social-bg: rgba(244, 243, 236, 0.5);
+  --shadow:
+    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+
+  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --mono: ui-monospace, Consolas, monospace;
+
+  font: 18px/145% var(--sans);
+  letter-spacing: 0.18px;
+  color-scheme: light dark;
+  color: var(--text);
+  background: var(--bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  @media (max-width: 1024px) {
+    font-size: 16px;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text: #9ca3af;
+    --text-h: #f3f4f6;
+    --bg: #16171d;
+    --border: #2e303a;
+    --code-bg: #1f2028;
+    --accent: #c084fc;
+    --accent-bg: rgba(192, 132, 252, 0.15);
+    --accent-border: rgba(192, 132, 252, 0.5);
+    --social-bg: rgba(47, 48, 58, 0.5);
+    --shadow:
+      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+  }
+
+  #social .button-icon {
+    filter: invert(1) brightness(2);
+  }
+}
+
+body {
+  margin: 0;
+}
+
+#root {
+  width: 1126px;
+  max-width: 100%;
+  margin: 0 auto;
+  text-align: center;
+  border-inline: 1px solid var(--border);
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+h1,
+h2 {
+  font-family: var(--heading);
+  font-weight: 500;
+  color: var(--text-h);
+}
+
+h1 {
+  font-size: 56px;
+  letter-spacing: -1.68px;
+  margin: 32px 0;
+  @media (max-width: 1024px) {
+    font-size: 36px;
+    margin: 20px 0;
+  }
+}
+
+h2 {
+  font-size: 24px;
+  line-height: 118%;
+  letter-spacing: -0.24px;
+  margin: 0 0 8px;
+  @media (max-width: 1024px) {
+    font-size: 20px;
+  }
+}
+
+p {
+  margin: 0;
+}
+
+code,
+.counter {
+  font-family: var(--mono);
+  display: inline-flex;
+  border-radius: 4px;
+  color: var(--text-h);
+}
+
+code {
+  font-size: 15px;
+  line-height: 135%;
+  padding: 4px 8px;
+  background: var(--code-bg);
+}*/
