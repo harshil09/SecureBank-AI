@@ -20,6 +20,7 @@ rag_service = RAGService()
 # ----------------------------
 class ChatRequest(BaseModel):
     query: str
+    conversation_history: List[Dict[str, Any]] = []
 
 
 # ----------------------------
@@ -34,18 +35,28 @@ class ChatResponse(BaseModel):
 # ----------------------------
 # AUTH HELPER
 # ----------------------------
-def get_user_id(authorization: Optional[str]) -> Optional[int]:
+def get_user_context(authorization: Optional[str]) -> Dict[str, Any]:
+    context: Dict[str, Any] = {
+        "authenticated": False,
+        "user_id": None,
+        "name": None,
+        "email": None,
+    }
     if not authorization:
-        return None
+        return context
 
     try:
         # verify_token expects full header: "Bearer <token>"
         payload = verify_token(authorization.strip())
         user_id = payload.get("user_id")
-        return int(user_id) if user_id is not None else None
+        context["authenticated"] = user_id is not None
+        context["user_id"] = int(user_id) if user_id is not None else None
+        context["name"] = payload.get("name")
+        context["email"] = payload.get("email")
+        return context
 
     except Exception:
-        return None
+        return context
 
 
 # =========================================================
@@ -56,14 +67,16 @@ async def chat_message(
     data: ChatRequest,
     authorization: Optional[str] = Header(None)
 ):
-    user_id = get_user_id(authorization)
-    is_auth = user_id is not None
+    user_context = get_user_context(authorization)
+    user_id = user_context.get("user_id")
+    is_auth = bool(user_context.get("authenticated"))
 
     try:
-        # ✅ FIX: await missing earlier
         result = await rag_service.chat(
             query=data.query,
-            user_id=user_id
+            user_id=user_id,
+            user_context=user_context,
+            conversation_history=data.conversation_history,
         )
 
         return ChatResponse(
@@ -84,15 +97,17 @@ async def chat_stream(
     data: ChatRequest,
     authorization: Optional[str] = Header(None)
 ):
-    user_id = get_user_id(authorization)
-    is_auth = user_id is not None
+    user_context = get_user_context(authorization)
+    user_id = user_context.get("user_id")
+    is_auth = bool(user_context.get("authenticated"))
 
     async def event_generator():
         try:
-            # ✅ FIX: await missing earlier
             result = await rag_service.chat(
                 query=data.query,
-                user_id=user_id
+                user_id=user_id,
+                user_context=user_context,
+                conversation_history=data.conversation_history,
             )
 
             text = result.get("response", "")

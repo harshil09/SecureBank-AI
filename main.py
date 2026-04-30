@@ -16,6 +16,8 @@ Environment Variables Required:
     - GOOGLE_CLIENT_ID: Google OAuth client ID
     - GOOGLE_CLIENT_SECRET: Google OAuth client secret
     - GOOGLE_REDIRECT_URI: OAuth callback URL (default: http://localhost:5000/auth/google/callback)
+    - CORS_ALLOW_ORIGINS: Comma-separated browser origins (e.g. https://app.vercel.app).
+      If unset, defaults to the Vite dev server (localhost:5173 and 127.0.0.1:5173).
 """
 from fastapi import FastAPI, HTTPException, Header, Request
 from fastapi.responses import RedirectResponse

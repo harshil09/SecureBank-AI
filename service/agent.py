@@ -108,7 +108,7 @@ class FanOutExecutor:
 
 def fan_in(results: Dict[str, Any]) -> str:
     if not results:
-        return "No relevant data found."
+        return "I could not find account-specific data for that request. Please ask about balance, transactions, or withdrawals."
 
     return f"""
 💰 Balance: {results.get('get_balance', 'N/A')}

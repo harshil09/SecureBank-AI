@@ -16,6 +16,7 @@ export const ChatBot = () => {
 
   const messagesEndRef = useRef(null);
   const streamFlushTimerRef = useRef(null);
+  const hasSeededGreetingRef = useRef(false);
 
   // ✅ MULTI TRANSACTION PARSER
   const parseMultipleTransactions = (text) => {
@@ -75,6 +76,67 @@ export const ChatBot = () => {
     return { count };
   };
 
+  const getNavigationRouteFromText = (text) => {
+    const normalized = text.toLowerCase().trim();
+
+    const hasNavVerb =
+      normalized.includes("take me") ||
+      normalized.includes("go to") ||
+      normalized.includes("open") ||
+      normalized.includes("navigate") ||
+      normalized.includes("show");
+
+    if (!hasNavVerb) {
+      if (
+        normalized === "signup page" ||
+        normalized === "sign up page" ||
+        normalized === "register page" ||
+        normalized === "create account page"
+      ) {
+        return "/register";
+      }
+      if (normalized === "dashboard page") {
+        return "/dashboard";
+      }
+      if (normalized === "login page" || normalized === "back to login page") {
+        return "/";
+      }
+      return null;
+    }
+
+    if (normalized.includes("user detail")) return "/user-details";
+    if (normalized.includes("dashboard")) return "/dashboard";
+    if (
+      normalized.includes("signup") ||
+      normalized.includes("sign up") ||
+      normalized.includes("register") ||
+      normalized.includes("create account")
+    ) {
+      return "/register";
+    }
+    if (
+      normalized.includes("back to login") ||
+      normalized.includes("go to login") ||
+      normalized.includes("login page")
+    ) {
+      return "/";
+    }
+
+    return null;
+  };
+
+  const shouldLogoutFromText = (text) => {
+    const normalized = text.toLowerCase().trim();
+    return (
+      normalized === "logout" ||
+      normalized === "log out" ||
+      normalized === "sign out" ||
+      normalized.includes("logout now") ||
+      normalized.includes("log me out") ||
+      normalized.includes("sign me out")
+    );
+  };
+
   const quickOptions = [
     { label: "Account Types", query: "What account types do you offer?" },
     { label: "Fees", query: "What are the fees?" },
@@ -96,6 +158,15 @@ export const ChatBot = () => {
       }
     };
   }, []);
+
+  useEffect(() => {
+    if (!isOpen || hasSeededGreetingRef.current) return;
+    setMessages((prev) => [
+      ...prev,
+      { role: "assistant", content: "Hi! How can I help you today?" },
+    ]);
+    hasSeededGreetingRef.current = true;
+  }, [isOpen]);
 
   // ⚡ STREAMING MESSAGE HANDLER
   const sendChatMessage = async (queryText) => {
@@ -178,6 +249,19 @@ export const ChatBot = () => {
                   detail: historyRequest,
                 })
               );
+            }
+
+            const route = getNavigationRouteFromText(queryText);
+            if (route) {
+              window.dispatchEvent(
+                new CustomEvent("bank-chat-navigate", {
+                  detail: { route },
+                })
+              );
+            }
+
+            if (shouldLogoutFromText(queryText)) {
+              window.dispatchEvent(new Event("bank-chat-logout"));
             }
 
             // Refresh dashboard only for read-type queries.
