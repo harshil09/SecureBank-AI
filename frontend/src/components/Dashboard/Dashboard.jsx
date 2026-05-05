@@ -338,7 +338,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div style={styles.container} id="dashboard-container">
+    <div style={styles.container} id="dashboard-container" data-bank-page="dashboard">
       {/* Background Effects */}
       <div style={styles.bgMesh}></div>
       <div style={styles.bgGradient}></div>
@@ -366,7 +366,7 @@ export default function Dashboard() {
               {(user?.email?.[0] || "U").toUpperCase()}
             </div>
             <div>
-              <p style={styles.userName}>
+              <p style={styles.userName} data-ai-field="accountName">
                 {user?.name || "User"}
               </p>
               <p style={styles.userEmail}>{user?.email || ""}</p>
@@ -388,6 +388,13 @@ export default function Dashboard() {
 
       {/* Main Content */}
       <main style={styles.main}>
+        <span
+          data-ai-field="activeTab"
+          style={styles.aiContextHidden}
+          aria-hidden="true"
+        >
+          overview
+        </span>
         {/* Balance Card */}
         <motion.div
           style={styles.balanceCard}
@@ -404,6 +411,7 @@ export default function Dashboard() {
                 <span style={styles.currencySymbol}>₹</span>
                 <motion.span
                   id="current-balance"
+                  data-ai-field="balance"
                   style={styles.balanceValue}
                   key={displayBalance}
                   initial={{ opacity: 0, y: -10 }}
@@ -449,8 +457,8 @@ export default function Dashboard() {
           </motion.div>
         ) : null}
 
-        {/* Action Cards Grid */}
-        <div style={styles.actionGrid}>
+        {/* Action Cards Grid — inputs are form-like controls for hasForm detection only */}
+        <div style={styles.actionGrid} data-ai-form-region="true">
           {/* Deposit Card */}
           <motion.div
             style={styles.actionCard}
@@ -730,6 +738,18 @@ const styles = {
     fontFamily: "'Sora', -apple-system, BlinkMacSystemFont, sans-serif",
     position: "relative",
     overflow: "hidden",
+  },
+
+  aiContextHidden: {
+    position: "absolute",
+    width: 1,
+    height: 1,
+    padding: 0,
+    margin: -1,
+    overflow: "hidden",
+    clip: "rect(0,0,0,0)",
+    whiteSpace: "nowrap",
+    border: 0,
   },
 
   // Background effects

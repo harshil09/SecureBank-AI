@@ -61,10 +61,15 @@ function ChatNavigationBridge() {
         "/": "Taken to login page",
       };
 
+      const message =
+        typeof event?.detail?.message === "string" && event.detail.message.trim()
+          ? event.detail.message.trim()
+          : routeMessageMap[route] || "Navigation complete";
+
       navigate(route, {
         state: {
           fromChatbot: true,
-          message: routeMessageMap[route] || "Navigation complete",
+          message,
         },
       });
     };

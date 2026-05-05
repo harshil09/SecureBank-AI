@@ -2,10 +2,18 @@
 
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLocation } from "react-router-dom";
 import { chatService } from "../../services/chatService";
+import { useAuthStore } from "../../store/authStore";
 import { MessageCircle, X, Send } from "lucide-react";
 
+/** Do not attach session JWT to chat on public pages (avoids stale token showing account data). */
+const PUBLIC_CHAT_PATHS = new Set(["/", "/register", "/reset-password", "/auth/callback"]);
+
 export const ChatBot = () => {
+  const location = useLocation();
+  const sessionToken = useAuthStore((s) => s.token);
+
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
@@ -125,6 +133,67 @@ export const ChatBot = () => {
     return null;
   };
 
+  /**
+   * When the user asks in natural language for their own email / profile / user id
+   * (without "take me to…"), still open User Details where the app shows that data.
+   */
+  const getImplicitUserDetailsNav = (text) => {
+    const n = text.toLowerCase().replace(/'/g, "'");
+
+    if (
+      /\b(support@|noreply|phishing|spam|contact\s+the\s+bank|customer\s+service\s+email)\b/.test(
+        n
+      )
+    ) {
+      return null;
+    }
+
+    // Policy-style questions ("is my email secure?") — not "where is my email?"
+    if (
+      /\bemail\b/.test(n) &&
+      /\b(secure|safety|safe\b|private|protected|scam|phish|hack|leak)\b/.test(n) &&
+      !/\b(tell me|what is|what's|whats|where|don'?t know|dont know|forgot|show me|see my|remember my)\b/.test(
+        n
+      )
+    ) {
+      return null;
+    }
+
+    const wantsProfilePage =
+      /\b(my\s+profile|account\s+details|personal\s+details|user\s+details|my\s+information|my\s+details)\b/.test(
+        n
+      ) ||
+      /\b(show|view|see|open)\b.*\b(my\s+)?(profile|details)\b/.test(n);
+
+    const wantsOwnEmail =
+      /\b(my|the)\s+email\b/.test(n) ||
+      /\bemail\b.*\b(i|my|me)\b/.test(n) ||
+      /\b(i|my)\b.*\bemail\b/.test(n) ||
+      /\b(tell me|can you tell)\b.*\bemail\b/.test(n) ||
+      /\b(what|where|which)\b.*\b(my\s+)?email\b/.test(n) ||
+      /\b(don'?t know|dont know|forgot|can'?t remember)\b.*\bemail\b/.test(n) ||
+      /\bemail\b.*\b(don'?t know|dont know|forgot|remember)\b/.test(n);
+
+    const wantsUserId =
+      /\bmy\s+(user\s*)?id\b/.test(n) ||
+      /\bwhat\s+is\s+my\s+(user\s*)?id\b/.test(n);
+
+    const wantsName =
+      /\bmy\s+name\b/.test(n) ||
+      /\bwhat\s+is\s+my\s+name\b/.test(n) ||
+      /\bwhat'?s\s+my\s+name\b/.test(n);
+
+    if (wantsOwnEmail || wantsProfilePage || wantsUserId || wantsName) {
+      return {
+        route: "/user-details",
+        message:
+          "Opened your profile — your email and account details are shown on this page.",
+      };
+    }
+
+    return null;
+  };
+
   const shouldLogoutFromText = (text) => {
     const normalized = text.toLowerCase().trim();
     return (
@@ -196,6 +265,10 @@ export const ChatBot = () => {
         });
       };
       
+      const authTokenForChat = PUBLIC_CHAT_PATHS.has(location.pathname)
+        ? null
+        : sessionToken || null;
+
       // ⚡ USE STREAMING METHOD
       await chatService.sendMessageStream(
         queryText,
@@ -251,11 +324,19 @@ export const ChatBot = () => {
               );
             }
 
-            const route = getNavigationRouteFromText(queryText);
+            let route = getNavigationRouteFromText(queryText);
+            let navMessage = null;
+            if (!route) {
+              const implicit = getImplicitUserDetailsNav(queryText);
+              if (implicit) {
+                route = implicit.route;
+                navMessage = implicit.message;
+              }
+            }
             if (route) {
               window.dispatchEvent(
                 new CustomEvent("bank-chat-navigate", {
-                  detail: { route },
+                  detail: { route, ...(navMessage ? { message: navMessage } : {}) },
                 })
               );
             }
@@ -294,7 +375,8 @@ export const ChatBot = () => {
           });
           setLoading(false);
           setIsStreaming(false);
-        }
+        },
+        { authToken: authTokenForChat }
       );
       
     } catch (error) {

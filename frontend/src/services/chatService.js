@@ -2,13 +2,22 @@
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
+/** If options.authToken is set (including null), use it; otherwise localStorage. */
+function resolveAuthToken(options = {}) {
+  if (Object.prototype.hasOwnProperty.call(options, 'authToken')) {
+    const v = options.authToken;
+    return typeof v === 'string' && v.length > 0 ? v : null;
+  }
+  return localStorage.getItem('token');
+}
+
 export const chatService = {
   /**
    * Original non-streaming method (keep for backwards compatibility)
    */
-  sendMessage: async (message, conversationHistory) => {
-    const token = localStorage.getItem('token');
-    
+  sendMessage: async (message, conversationHistory, options = {}) => {
+    const token = resolveAuthToken(options);
+
     const response = await fetch(`${API_URL}/api/chat/message`, {
       method: 'POST',
       headers: {
@@ -39,9 +48,9 @@ export const chatService = {
    * @param {Function} onComplete - Called when streaming finishes: () => void
    * @param {Function} onError - Called if error occurs: (error: string) => void
    */
-  sendMessageStream: async (message, conversationHistory, onChunk, onComplete, onError) => {
-    const token = localStorage.getItem('token');
-    
+  sendMessageStream: async (message, conversationHistory, onChunk, onComplete, onError, options = {}) => {
+    const token = resolveAuthToken(options);
+
     try {
       // Open streaming connection
       const response = await fetch(`${API_URL}/api/chat/message/stream`, {

@@ -45,7 +45,7 @@ if os.name == "nt" and hasattr(asyncio, "WindowsProactorEventLoopPolicy"):
 #Load .env into environment
 load_dotenv()
 
-from routers import chat
+from routers import chat, ui_pipeline
 
 # Password hashing context using Argon2 (OWASP recommended)
 pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
@@ -105,6 +105,7 @@ rag_service = None
 
 
 app.include_router(chat.router)
+app.include_router(ui_pipeline.router)
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,

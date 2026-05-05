@@ -24,9 +24,13 @@ class RAGService:
         )
         self.retriever = self.vectorstore.as_retriever(search_kwargs={"k": 3})
 
+        # OpenAI-compatible client requires a non-empty key at init; set OPENROUTER_API_KEY for real chat.
+        openrouter_key = os.getenv("OPENROUTER_API_KEY") or ""
+        if not openrouter_key:
+            print("⚠️ OPENROUTER_API_KEY not set; configure it for AI chat to call OpenRouter.")
         self.llm = ChatOpenAI(
             model="meta-llama/llama-3-8b-instruct",
-            api_key=os.getenv("OPENROUTER_API_KEY"),
+            api_key=openrouter_key or "unset-openrouter-key",
             base_url="https://openrouter.ai/api/v1",
             temperature=0.2,
             streaming=True,
