@@ -2,6 +2,29 @@
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
+export const CHAT_SESSION_STORAGE_KEY = 'securebank_chat_session_id';
+
+/** Stable anonymous chat key; still sent when logged in (server ignores for Redis key). */
+export function getOrCreateChatSessionId() {
+  if (typeof window === 'undefined' || !window.localStorage) {
+    return '';
+  }
+  let id = localStorage.getItem(CHAT_SESSION_STORAGE_KEY);
+  if (!id) {
+    id = crypto.randomUUID();
+    localStorage.setItem(CHAT_SESSION_STORAGE_KEY, id);
+  }
+  return id;
+}
+
+function chatSessionHeaders(options = {}) {
+  const sid =
+    typeof options.chatSessionId === 'string' && options.chatSessionId.length > 0
+      ? options.chatSessionId
+      : getOrCreateChatSessionId();
+  return sid ? { 'X-Chat-Session-Id': sid } : {};
+}
+
 /** If options.authToken is set (including null), use it; otherwise localStorage. */
 function resolveAuthToken(options = {}) {
   if (Object.prototype.hasOwnProperty.call(options, 'authToken')) {
@@ -13,6 +36,26 @@ function resolveAuthToken(options = {}) {
 
 export const chatService = {
   /**
+   * Load last persisted messages (verbatim tail) from the server.
+   */
+  getChatContext: async (options = {}) => {
+    const token = resolveAuthToken(options);
+    const response = await fetch(`${API_URL}/api/chat/context`, {
+      method: 'GET',
+      headers: {
+        ...(token && { 'Authorization': `Bearer ${token}` }),
+        ...chatSessionHeaders(options),
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return await response.json();
+  },
+
+  /**
    * Original non-streaming method (keep for backwards compatibility)
    */
   sendMessage: async (message, conversationHistory, options = {}) => {
@@ -22,7 +65,8 @@ export const chatService = {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        ...(token && { 'Authorization': `Bearer ${token}` })
+        ...(token && { 'Authorization': `Bearer ${token}` }),
+        ...chatSessionHeaders(options),
       },
       body: JSON.stringify({
         query: message,
@@ -57,7 +101,8 @@ export const chatService = {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          ...(token && { 'Authorization': `Bearer ${token}` })
+          ...(token && { 'Authorization': `Bearer ${token}` }),
+          ...chatSessionHeaders(options),
         },
         body: JSON.stringify({
           query: message,

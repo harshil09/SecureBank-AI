@@ -32,5 +32,27 @@ def create_table():
     )
     """)
 
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS chat_session (
+        id TEXT PRIMARY KEY,
+        user_id INTEGER,
+        created_at TEXT NOT NULL,
+        last_activity_at TEXT NOT NULL,
+        expires_at TEXT NOT NULL
+    )
+    """)
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS chat_message_meta (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        session_id TEXT NOT NULL,
+        seq INTEGER NOT NULL,
+        role TEXT NOT NULL,
+        content_sha256 TEXT NOT NULL,
+        created_at TEXT NOT NULL,
+        FOREIGN KEY(session_id) REFERENCES chat_session(id)
+    )
+    """)
+
     conn.commit()
     conn.close()

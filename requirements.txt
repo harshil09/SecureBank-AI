@@ -23,4 +23,5 @@ starlette==0.52.1
 itsdangerous>=2.0.0
 streamlit==1.54.0
 python-multipart==0.0.26
+redis[hiredis]>=5.0.0,<6
 uvicorn==0.42.0

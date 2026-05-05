@@ -7,12 +7,15 @@ import asyncio
 import re
 
 from service.rag_service import RAGService
+from service.chat_tail_store import ChatTailStore, resolve_prior_for_llm, strip_for_client
+from service.chat_audit import record_message_meta
 from auth_utils import verify_token
 
 router = APIRouter(prefix="/api/chat")
 
 # ✅ Singleton RAG service
 rag_service = RAGService()
+tail_store = ChatTailStore()
 
 
 # ----------------------------
@@ -30,6 +33,10 @@ class ChatResponse(BaseModel):
     response: str
     sources: List[Any] = []
     authenticated: bool = False
+
+
+class ChatContextResponse(BaseModel):
+    messages: List[Dict[str, str]] = []
 
 
 # ----------------------------
@@ -59,28 +66,92 @@ def get_user_context(authorization: Optional[str]) -> Dict[str, Any]:
         return context
 
 
+def _guest_session_id(header_val: Optional[str]) -> Optional[str]:
+    if header_val and str(header_val).strip():
+        return str(header_val).strip()
+    return None
+
+
+async def _persist_exchange(
+    *,
+    user_id: Optional[int],
+    guest_session_id: Optional[str],
+    user_text: str,
+    assistant_text: str,
+) -> None:
+    if not assistant_text.strip():
+        return
+    if user_id is None and not guest_session_id:
+        return
+    await tail_store.append_exchange(
+        user_id=user_id,
+        guest_session_id=guest_session_id,
+        user_text=user_text,
+        assistant_text=assistant_text,
+    )
+    record_message_meta(
+        user_id=user_id,
+        guest_session_id=guest_session_id,
+        role="user",
+        content=user_text,
+    )
+    record_message_meta(
+        user_id=user_id,
+        guest_session_id=guest_session_id,
+        role="assistant",
+        content=assistant_text,
+    )
+
+
+@router.get("/context", response_model=ChatContextResponse)
+async def chat_context(
+    authorization: Optional[str] = Header(None),
+    x_chat_session_id: Optional[str] = Header(None, alias="X-Chat-Session-Id"),
+):
+    user_context = get_user_context(authorization)
+    user_id = user_context.get("user_id")
+    guest_id = _guest_session_id(x_chat_session_id) if user_id is None else None
+    if user_id is None and not guest_id:
+        return ChatContextResponse(messages=[])
+    tail = await tail_store.get_tail(user_id=user_id, guest_session_id=guest_id)
+    return ChatContextResponse(messages=strip_for_client(tail))
+
+
 # =========================================================
 # 💬 NORMAL CHAT
 # =========================================================
 @router.post("/message", response_model=ChatResponse)
 async def chat_message(
     data: ChatRequest,
-    authorization: Optional[str] = Header(None)
+    authorization: Optional[str] = Header(None),
+    x_chat_session_id: Optional[str] = Header(None, alias="X-Chat-Session-Id"),
 ):
     user_context = get_user_context(authorization)
     user_id = user_context.get("user_id")
     is_auth = bool(user_context.get("authenticated"))
+    guest_id = _guest_session_id(x_chat_session_id) if user_id is None else None
+
+    tail = await tail_store.get_tail(user_id=user_id, guest_session_id=guest_id)
+    prior = resolve_prior_for_llm(tail, data.conversation_history, data.query)
 
     try:
         result = await rag_service.chat(
             query=data.query,
             user_id=user_id,
             user_context=user_context,
-            conversation_history=data.conversation_history,
+            conversation_history=prior,
+        )
+        text = result.get("response", "")
+
+        await _persist_exchange(
+            user_id=user_id,
+            guest_session_id=guest_id,
+            user_text=data.query,
+            assistant_text=text,
         )
 
         return ChatResponse(
-            response=result.get("response", ""),
+            response=text,
             sources=result.get("sources", []),
             authenticated=is_auth
         )
@@ -95,11 +166,16 @@ async def chat_message(
 @router.post("/message/stream")
 async def chat_stream(
     data: ChatRequest,
-    authorization: Optional[str] = Header(None)
+    authorization: Optional[str] = Header(None),
+    x_chat_session_id: Optional[str] = Header(None, alias="X-Chat-Session-Id"),
 ):
     user_context = get_user_context(authorization)
     user_id = user_context.get("user_id")
     is_auth = bool(user_context.get("authenticated"))
+    guest_id = _guest_session_id(x_chat_session_id) if user_id is None else None
+
+    tail = await tail_store.get_tail(user_id=user_id, guest_session_id=guest_id)
+    prior = resolve_prior_for_llm(tail, data.conversation_history, data.query)
 
     async def event_generator():
         try:
@@ -107,7 +183,7 @@ async def chat_stream(
                 query=data.query,
                 user_id=user_id,
                 user_context=user_context,
-                conversation_history=data.conversation_history,
+                conversation_history=prior,
             )
 
             text = result.get("response", "")
@@ -129,6 +205,13 @@ async def chat_stream(
                 })}\n\n"
 
                 await asyncio.sleep(0.025)
+
+            await _persist_exchange(
+                user_id=user_id,
+                guest_session_id=guest_id,
+                user_text=data.query,
+                assistant_text=text,
+            )
 
             yield f"data: {json.dumps({'done': True})}\n\n"
 

@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation } from "react-router-dom";
-import { chatService } from "../../services/chatService";
+import { chatService, getOrCreateChatSessionId } from "../../services/chatService";
 import { useAuthStore } from "../../store/authStore";
 import { MessageCircle, X, Send } from "lucide-react";
 
@@ -24,7 +24,8 @@ export const ChatBot = () => {
 
   const messagesEndRef = useRef(null);
   const streamFlushTimerRef = useRef(null);
-  const hasSeededGreetingRef = useRef(false);
+  const hydrationDoneRef = useRef(false);
+  const [tailLoading, setTailLoading] = useState(false);
 
   // ✅ MULTI TRANSACTION PARSER
   const parseMultipleTransactions = (text) => {
@@ -229,17 +230,56 @@ export const ChatBot = () => {
   }, []);
 
   useEffect(() => {
-    if (!isOpen || hasSeededGreetingRef.current) return;
-    setMessages((prev) => [
-      ...prev,
-      { role: "assistant", content: "Hi! How can I help you today?" },
-    ]);
-    hasSeededGreetingRef.current = true;
-  }, [isOpen]);
+    hydrationDoneRef.current = false;
+  }, [sessionToken, location.pathname]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    if (hydrationDoneRef.current) return;
+
+    let cancelled = false;
+    setTailLoading(true);
+
+    (async () => {
+      try {
+        const authTokenForChat = PUBLIC_CHAT_PATHS.has(location.pathname)
+          ? null
+          : sessionToken || null;
+        const ctx = await chatService.getChatContext({
+          authToken: authTokenForChat,
+          chatSessionId: getOrCreateChatSessionId(),
+        });
+        if (cancelled) return;
+        if (ctx.messages?.length) {
+          setMessages(ctx.messages);
+        } else {
+          setMessages([
+            { role: "assistant", content: "Hi! How can I help you today?" },
+          ]);
+        }
+      } catch (e) {
+        if (!cancelled) {
+          console.error("Chat context load failed:", e);
+          setMessages([
+            { role: "assistant", content: "Hi! How can I help you today?" },
+          ]);
+        }
+      } finally {
+        if (!cancelled) {
+          hydrationDoneRef.current = true;
+          setTailLoading(false);
+        }
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isOpen, sessionToken, location.pathname]);
 
   // ⚡ STREAMING MESSAGE HANDLER
   const sendChatMessage = async (queryText) => {
-    if (!queryText.trim() || loading) return;
+    if (!queryText.trim() || loading || tailLoading) return;
 
     const userMessage = { role: "user", content: queryText };
     const updatedMessages = [...messages, userMessage];
@@ -376,7 +416,10 @@ export const ChatBot = () => {
           setLoading(false);
           setIsStreaming(false);
         },
-        { authToken: authTokenForChat }
+        {
+          authToken: authTokenForChat,
+          chatSessionId: getOrCreateChatSessionId(),
+        }
       );
       
     } catch (error) {
@@ -441,7 +484,10 @@ export const ChatBot = () => {
 
             {/* Messages */}
             <div className="flex-1 overflow-y-auto p-3 space-y-2">
-              {messages.length === 0 && (
+              {tailLoading && messages.length === 0 && (
+                <p className="text-gray-500 text-sm">Loading conversation…</p>
+              )}
+              {!tailLoading && messages.length === 0 && (
                 <p className="text-gray-500 text-sm">
                   Ask something to start...
                 </p>
@@ -515,7 +561,7 @@ export const ChatBot = () => {
                   <button
                     key={option.label}
                     type="button"
-                    disabled={loading}
+                    disabled={loading || tailLoading}
                     onClick={() => sendChatMessage(option.query)}
                     className="text-left text-xs border rounded px-2 py-2 hover:bg-purple-50 disabled:opacity-50 transition-colors"
                   >
@@ -530,13 +576,13 @@ export const ChatBot = () => {
               <input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                disabled={loading}
+                disabled={loading || tailLoading}
                 className="flex-1 border rounded px-2 py-1 text-sm disabled:opacity-50 disabled:bg-gray-50"
                 placeholder="Type a message..."
               />
               <button
                 type="submit"
-                disabled={loading || !input.trim()}
+                disabled={loading || tailLoading || !input.trim()}
                 className="bg-purple-600 text-white px-3 rounded hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 <Send size={16} />
