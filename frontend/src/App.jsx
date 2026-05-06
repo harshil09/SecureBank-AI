@@ -17,7 +17,7 @@ export default App;*/
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { useAuthStore } from "./store/authStore";
-import Register from "./components/Auth/Register"; // ✅ ADD THIS
+import Register from "./components/Auth/Register"; 
 import Login from "./components/Auth/Login";
 import Dashboard from "./components/Dashboard/Dashboard";
 import UserDetails from "./components/Dashboard/UserDetails";

@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useLocation } from "react-router-dom";
 import { chatService, getOrCreateChatSessionId } from "../../services/chatService";
 import { useAuthStore } from "../../store/authStore";
+import { buildUiAgentRequest } from "../../lib/bankingUiContext";
 import { MessageCircle, X, Send } from "lucide-react";
 
 /** Do not attach session JWT to chat on public pages (avoids stale token showing account data). */
@@ -93,7 +94,10 @@ export const ChatBot = () => {
       normalized.includes("go to") ||
       normalized.includes("open") ||
       normalized.includes("navigate") ||
-      normalized.includes("show");
+      normalized.includes("show") ||
+      normalized.includes("redirect") ||
+      normalized.includes("send me") ||
+      normalized.includes("bring me");
 
     if (!hasNavVerb) {
       if (
@@ -115,6 +119,7 @@ export const ChatBot = () => {
 
     if (normalized.includes("user detail")) return "/user-details";
     if (normalized.includes("dashboard")) return "/dashboard";
+    if (normalized.includes("transaction") && normalized.includes("dashboard")) return "/dashboard";
     if (
       normalized.includes("signup") ||
       normalized.includes("sign up") ||
@@ -129,67 +134,6 @@ export const ChatBot = () => {
       normalized.includes("login page")
     ) {
       return "/";
-    }
-
-    return null;
-  };
-
-  /**
-   * When the user asks in natural language for their own email / profile / user id
-   * (without "take me to…"), still open User Details where the app shows that data.
-   */
-  const getImplicitUserDetailsNav = (text) => {
-    const n = text.toLowerCase().replace(/'/g, "'");
-
-    if (
-      /\b(support@|noreply|phishing|spam|contact\s+the\s+bank|customer\s+service\s+email)\b/.test(
-        n
-      )
-    ) {
-      return null;
-    }
-
-    // Policy-style questions ("is my email secure?") — not "where is my email?"
-    if (
-      /\bemail\b/.test(n) &&
-      /\b(secure|safety|safe\b|private|protected|scam|phish|hack|leak)\b/.test(n) &&
-      !/\b(tell me|what is|what's|whats|where|don'?t know|dont know|forgot|show me|see my|remember my)\b/.test(
-        n
-      )
-    ) {
-      return null;
-    }
-
-    const wantsProfilePage =
-      /\b(my\s+profile|account\s+details|personal\s+details|user\s+details|my\s+information|my\s+details)\b/.test(
-        n
-      ) ||
-      /\b(show|view|see|open)\b.*\b(my\s+)?(profile|details)\b/.test(n);
-
-    const wantsOwnEmail =
-      /\b(my|the)\s+email\b/.test(n) ||
-      /\bemail\b.*\b(i|my|me)\b/.test(n) ||
-      /\b(i|my)\b.*\bemail\b/.test(n) ||
-      /\b(tell me|can you tell)\b.*\bemail\b/.test(n) ||
-      /\b(what|where|which)\b.*\b(my\s+)?email\b/.test(n) ||
-      /\b(don'?t know|dont know|forgot|can'?t remember)\b.*\bemail\b/.test(n) ||
-      /\bemail\b.*\b(don'?t know|dont know|forgot|remember)\b/.test(n);
-
-    const wantsUserId =
-      /\bmy\s+(user\s*)?id\b/.test(n) ||
-      /\bwhat\s+is\s+my\s+(user\s*)?id\b/.test(n);
-
-    const wantsName =
-      /\bmy\s+name\b/.test(n) ||
-      /\bwhat\s+is\s+my\s+name\b/.test(n) ||
-      /\bwhat'?s\s+my\s+name\b/.test(n);
-
-    if (wantsOwnEmail || wantsProfilePage || wantsUserId || wantsName) {
-      return {
-        route: "/user-details",
-        message:
-          "Opened your profile — your email and account details are shown on this page.",
-      };
     }
 
     return null;
@@ -215,6 +159,23 @@ export const ChatBot = () => {
     { label: "My Balance", query: "What is my balance?" },
     { label: "Transactions", query: "Show my recent transactions" },
   ];
+
+  const STATIC_SAFE_ROUTES = new Set(["/", "/register", "/dashboard", "/user-details"]);
+
+  const canExecuteAction = (action, knownRoutes = []) => {
+    if (!action || action.type !== "navigate") return false;
+    const dynamicRouteSet = new Set(
+      (Array.isArray(knownRoutes) ? knownRoutes : [])
+        .map((r) => (r && typeof r.route === "string" ? r.route : null))
+        .filter(Boolean)
+    );
+    if (!(STATIC_SAFE_ROUTES.has(action.route) || dynamicRouteSet.has(action.route))) {
+      return false;
+    }
+    const confidence = Number(action.confidence ?? 1);
+    if (!Number.isFinite(confidence) || confidence < 0.7) return false;
+    return true;
+  };
 
   // Auto-scroll
   useEffect(() => {
@@ -327,7 +288,7 @@ export const ChatBot = () => {
         },
         
         // ✅ onComplete: Called when streaming finishes
-        () => {
+        async () => {
           if (streamFlushTimerRef.current) {
             clearTimeout(streamFlushTimerRef.current);
             streamFlushTimerRef.current = null;
@@ -364,14 +325,31 @@ export const ChatBot = () => {
               );
             }
 
-            let route = getNavigationRouteFromText(queryText);
+            let route = null;
             let navMessage = null;
-            if (!route) {
-              const implicit = getImplicitUserDetailsNav(queryText);
-              if (implicit) {
-                route = implicit.route;
-                navMessage = implicit.message;
+
+            // Primary router: AI concierge + sanitized UI context snapshot.
+            try {
+              const uiPayload = buildUiAgentRequest(queryText);
+              const concierge = await chatService.sendUiAgentRequest(
+                uiPayload,
+                { authToken: authTokenForChat }
+              );
+              if (canExecuteAction(concierge?.action, uiPayload.route_catalog)) {
+                route = concierge.action.route;
+                navMessage =
+                  typeof concierge.action.message === "string" &&
+                  concierge.action.message.trim()
+                    ? concierge.action.message.trim()
+                    : null;
               }
+            } catch (conciergeError) {
+              console.warn("UI concierge action unavailable:", conciergeError);
+            }
+
+            // Fallback: explicit route command parser only.
+            if (!route) {
+              route = getNavigationRouteFromText(queryText);
             }
             if (route) {
               window.dispatchEvent(

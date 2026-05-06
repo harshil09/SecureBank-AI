@@ -11,6 +11,10 @@ class RAGHandler:
         self.retriever = retriever
 
     async def handle(self, cmd: RAGCommand):
+        deterministic = self._deterministic_identity_response(cmd.query, cmd.injected_context)
+        if deterministic:
+            return {"response": deterministic}
+
         context = cmd.context or self._retrieve_context(cmd.query)
         history_text = self._history_to_text(cmd.conversation_history)
         prompt = f"""
@@ -39,6 +43,61 @@ ANSWER:
 """
         res = await asyncio.to_thread(self.llm.invoke, prompt)
         return {"response": self._clean_text(res.content)}
+
+    def _deterministic_identity_response(self, query: str, injected_context: str) -> str | None:
+        q = (query or "").lower()
+        if not q:
+            return None
+
+        asks_email = "email" in q and any(
+            token in q for token in ("my", "me", "show", "view", "what", "where", "forgot", "find")
+        )
+        asks_user_id = ("user id" in q or "userid" in q) and any(
+            token in q for token in ("my", "me", "show", "view", "what", "where", "find")
+        )
+        asks_name = "name" in q and any(token in q for token in ("my", "me", "what"))
+
+        if not (asks_email or asks_user_id or asks_name):
+            return None
+
+        email = self._extract_injected_value(injected_context, "user_email")
+        user_id = self._extract_injected_value(injected_context, "user_id")
+        name = self._extract_injected_value(injected_context, "user_name")
+
+        # Guard against placeholders.
+        if email in {"Not available", "Guest", "guest", "unknown", "none"}:
+            email = None
+        if user_id in {"guest", "unknown", "none"}:
+            user_id = None
+        if name in {"Guest", "guest", "unknown", "none"}:
+            name = None
+
+        if asks_email:
+            if email:
+                return f"Your email is {email}. You can also view it on the User Details page."
+            return "I cannot access your email right now. Please open the User Details page to verify it."
+
+        if asks_user_id:
+            if user_id:
+                return f"Your user ID is {user_id}. You can also view it on the User Details page."
+            return "I cannot access your user ID right now. Please open the User Details page to verify it."
+
+        if asks_name:
+            if name:
+                return f"Your name is {name}. You can also view it on the User Details page."
+            return "I cannot access your name right now. Please open the User Details page to verify it."
+
+        return None
+
+    def _extract_injected_value(self, injected_context: str, key: str) -> str | None:
+        if not injected_context:
+            return None
+        pattern = rf"^{re.escape(key)}:\s*(.+)$"
+        match = re.search(pattern, injected_context, flags=re.MULTILINE)
+        if not match:
+            return None
+        value = match.group(1).strip()
+        return value or None
 
     def _retrieve_context(self, query: str) -> str:
         docs = self._hybrid_retrieve(query=query, candidate_k=24, top_k=6)

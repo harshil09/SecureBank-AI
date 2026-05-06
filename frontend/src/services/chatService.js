@@ -35,6 +35,24 @@ function resolveAuthToken(options = {}) {
 }
 
 export const chatService = {
+  sendUiAgentRequest: async (payload, options = {}) => {
+    const token = resolveAuthToken(options);
+    const response = await fetch(`${API_URL}/api/ui-context/agent`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return await response.json();
+  },
+
   /**
    * Load last persisted messages (verbatim tail) from the server.
    */
