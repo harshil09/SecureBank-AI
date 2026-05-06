@@ -147,13 +147,6 @@ async def startup():
 #STEP1: REDIRECT TO GOOGLE
 @app.get("/auth/google/login")
 async def google_login(request:Request):
-    #if not os.getenv("GOOGLE_CLIENT_ID") or not os.getenv("GOOGLE_CLIENT_SECRET"):
-     #   raise HTTPException(
-      #      status_code=500,
-       #     detail="Google OAuth is not configured. Set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in .env",
-       # )
-    # Build callback URL from incoming host to keep session/state on same origin
-    # (prevents localhost vs 127.0.0.1 state mismatch issues).
     redirect_uri = str(request.url_for("google_callback"))
     # prompt=select_account forces Google's account UI instead of silently reusing the browser session
     return await oauth.google.authorize_redirect(
@@ -201,12 +194,6 @@ async def google_callback(request: Request):
         user_id=result[0]
     conn.close()
 
-    # Issue JWT (Google "name" is used for dashboard welcome, e.g. "Harshil Soni")
-    #jwt_token = create_access_token(
-     #   {"user_id": user_id, "email": email, "name": display_name}
-    #)
-    #return RedirectResponse(url=f"http://127.0.0.1:8501/?token={jwt_token}", status_code=302)
-    
     jwt_token = create_access_token(
     {"user_id": user_id, "email": email, "name": display_name}
 )
@@ -307,7 +294,6 @@ def Login(user: User):
     conn.commit()
     conn.close()
 
-     # ✅ ADD NAME (fallback from email)
     #name = user.email.split("@")[0].replace(".", " ").title()
 
     name = re.sub(r"\d+", "", user.email.split("@")[0]).replace(".", " ").title()
